@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 23)
 include_directories(include)
 
 add_executable(Ray_Tracer
-        src/main.cpp)
+        src/main.cpp
+        include/vec3.h
+        include/color.h)
