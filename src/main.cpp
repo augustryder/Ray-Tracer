@@ -1,8 +1,6 @@
+#include "color.h"
 #include <fstream>
 #include <iostream>
-#include <ranges>
-#include "vec3.h"
-#include "color.h"
 
 int main()
 {
