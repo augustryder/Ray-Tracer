@@ -3,8 +3,22 @@
 #include <fstream>
 #include <iostream>
 
+bool hit_sphere(const Vec3 &center, double radius, const Ray &ray)
+{
+  Vec3 C = center;
+  Vec3 Q = ray.source();
+  Vec3 d = ray.direction();
+  const auto a = dot(d, d);
+  const auto b = -2.0 * dot(d, (C - Q));
+  const auto c = dot(C - Q, C - Q) - radius * radius;
+  const auto discriminant = b * b - 4 * a * c;
+  return (discriminant >= 0);
+}
+
 Color ray_color(const Ray &ray)
 {
+  if (hit_sphere(Vec3{0, 0, -1.5}, 1, ray))
+    return Color{1, 0, 0};
   const Vec3 unit_dir = normalize(ray.direction());
   const double a = 0.5 * (unit_dir.y() + 1);
   return a * Color{0.1, 0.2, 0.8} + (1 - a) * Color{1.0, 1.0, 1.0};
@@ -12,7 +26,6 @@ Color ray_color(const Ray &ray)
 
 int main()
 {
-
   constexpr double aspect_ratio = 16.0 / 9.0;
   constexpr int image_width = 400;
   constexpr int image_height =
