@@ -32,7 +32,8 @@ public:
 
     hit_record.t = root;
     hit_record.position = ray.position(hit_record.t);
-    hit_record.normal = (hit_record.position - center_) / radius_;
+    const Vec3 outward_normal = (hit_record.position - center_) / radius_;
+    hit_record.set_face_normal(ray, outward_normal);
 
     return true;
   }

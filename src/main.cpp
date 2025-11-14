@@ -2,19 +2,18 @@
 #include "hittable.h"
 #include "ray.h"
 #include "sphere.h"
+#include "utils.h"
+#include "world.h"
 #include <fstream>
 #include <iostream>
+#include <memory>
 
-Color ray_color(const Ray &ray)
+Color ray_color(const Ray &ray, const World &world)
 {
-  Vec3 center = Vec3{0, 0, -2.0};
-  double radius = 1.0;
-  Sphere sphere{center, radius};
   struct hit_record hit_record;
-  if (sphere.hit(ray, 0.0, 1000000.0, hit_record))
+  if (world.hit(ray, 0.0, infinity, hit_record))
   {
-    Vec3 normal = hit_record.normal;
-    return 0.5 * Color{normal.x() + 1, normal.y() + 1, normal.z() + 1};
+    return 0.5 * (hit_record.normal + Color{1, 1, 1});
   }
   const Vec3 unit_dir = normalize(ray.direction());
   const double a = 0.5 * (unit_dir.y() + 1);
@@ -23,8 +22,9 @@ Color ray_color(const Ray &ray)
 
 int main()
 {
+  // Camera and viewport
   constexpr double aspect_ratio = 16.0 / 9.0;
-  constexpr int image_width = 400;
+  constexpr int image_width = 1280;
   constexpr int image_height =
       (static_cast<double>(image_width) / aspect_ratio < 1)
           ? 1
@@ -47,6 +47,12 @@ int main()
                                  (-viewport_u / 2) + (-viewport_v / 2);
   const Vec3 pixel_zero = viewport_top_left + 0.5 * (viewport_du + viewport_dv);
 
+  // Add objects to world
+  const auto sphere1 = std::make_shared<Sphere>(Vec3{0, 0, -3}, 1.0);
+  const auto sphere2 = std::make_shared<Sphere>(Vec3{0, 1, -3}, 1.0);
+  const auto ground = std::make_shared<Sphere>(Vec3{0, -100.5, -3}, 100.0);
+  World world{sphere1, sphere2, ground};
+
   std::ofstream image_file{"image.ppm"};
   if (!image_file.is_open())
     throw std::runtime_error("Could not open image.ppm");
@@ -63,7 +69,7 @@ int main()
       const auto ray_dir = pixel_pos - camera_pos;
       const Ray ray{camera_pos, ray_dir};
 
-      const auto pixel_color = ray_color(ray);
+      const auto pixel_color = ray_color(ray, world);
       write_color(image_file, pixel_color);
     }
   }

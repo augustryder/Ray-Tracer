@@ -1,5 +1,7 @@
 #!/bin/sh
 
 cmake --build build
-./build/raytracer
-open image.ppm
+if [[ "$?" -eq "0" ]]; then
+  ./build/raytracer
+  chafa -s 100x100 image.ppm
+fi
