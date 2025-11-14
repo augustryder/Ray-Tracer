@@ -10,8 +10,10 @@ class Camera
 {
 public:
   Camera() = default;
-  Camera(const Vec3 &pos, double aspect_ratio, int image_width)
-      : camera_pos_{pos}, aspect_ratio_{aspect_ratio}, image_width_{image_width}
+  Camera(const Vec3 &pos, double aspect_ratio, int image_width,
+         int samples_per_pixel)
+      : camera_pos_{pos}, aspect_ratio_{aspect_ratio},
+        image_width_{image_width}, samples_per_pixel_{samples_per_pixel}
   {
   }
 
@@ -28,12 +30,13 @@ public:
       std::println("Lines Remaining: {}", image_height_ - row);
       for (auto col = 0; col < image_width_; ++col)
       {
-        const auto pixel_pos =
-            pixel_zero_ + (row * viewport_dv_) + (col * viewport_du_);
-        const auto ray_dir = pixel_pos - camera_pos_;
-        const Ray ray{camera_pos_, ray_dir};
-
-        const auto pixel_color = ray_color(ray, world);
+        Color pixel_color{0, 0, 0};
+        for (auto s = 0; s < samples_per_pixel_; s++)
+        {
+          Ray ray = get_ray(row, col);
+          pixel_color += ray_color(ray, world);
+        }
+        pixel_color /= samples_per_pixel_;
         write_color(image_file, pixel_color);
       }
     }
@@ -53,9 +56,21 @@ private:
     return a * Color{0.1, 0.2, 0.8} + (1 - a) * Color{1.0, 1.0, 1.0};
   }
 
+  Ray get_ray(int row, int col) const
+  {
+    const Vec3 center_pixel =
+        pixel_zero_ + (row * viewport_dv_) + (col * viewport_du_);
+    const Vec3 dv = random_double(-0.5, 0.5) * viewport_dv_;
+    const Vec3 du = random_double(-0.5, 0.5) * viewport_du_;
+    const Vec3 sample_position = center_pixel + dv + du;
+    const Vec3 sample_dir = sample_position - camera_pos_;
+    return Ray{camera_pos_, sample_dir};
+  }
+
   Vec3 camera_pos_{0, 0, 0};
   double aspect_ratio_ = 16.0 / 9.0;
   int image_width_ = 1280;
+  int samples_per_pixel_ = 1;
 
   const int image_height_ =
       (static_cast<double>(image_width_) / aspect_ratio_ < 1)

@@ -33,7 +33,7 @@ public:
     return *this;
   }
 
-  Vec3 &operator/=(double scalar) { return *this *= 1 / scalar; }
+  Vec3 &operator/=(double scalar) { return (*this *= (1 / scalar)); }
 
   double length() const
   {

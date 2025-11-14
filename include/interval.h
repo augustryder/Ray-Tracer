@@ -16,6 +16,15 @@ public:
     return exclusive ? min_ < x && x < max_ : min_ <= x && x <= max_;
   }
 
+  double clamp(double x) const
+  {
+    if (x < min_)
+      return min_;
+    if (x > max_)
+      return max_;
+    return x;
+  }
+
   static const Interval empty;
   static const Interval universe;
 
