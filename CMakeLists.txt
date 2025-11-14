@@ -6,7 +6,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(include)
 
-add_executable(raytracer
-        src/main.cpp
-        include/vec3.h
-        include/color.h)
+add_executable(raytracer src/main.cpp)

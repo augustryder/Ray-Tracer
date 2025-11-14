@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hittable.h"
+#include "interval.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -21,15 +22,15 @@ public:
 
   void clear() { hittable_list_.clear(); }
 
-  bool hit(const Ray &ray, double ray_tmin, double ray_tmax,
+  bool hit(const Ray &ray, Interval ray_t,
            struct hit_record &hit_record) const override
   {
     bool hit_anything = false;
-    double closest = ray_tmax;
+    double closest = ray_t.max();
     struct hit_record temp_rec;
     for (const auto &object : hittable_list_)
     {
-      if (object->hit(ray, ray_tmin, closest, temp_rec))
+      if (object->hit(ray, Interval{ray_t.min(), closest}, temp_rec))
       {
         hit_anything = true;
         closest = temp_rec.t;

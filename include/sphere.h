@@ -1,4 +1,5 @@
 #include "hittable.h"
+#include "interval.h"
 #include "vec3.h"
 
 class Sphere : public Hittable
@@ -9,7 +10,7 @@ public:
   {
   }
 
-  bool hit(const Ray &ray, double ray_tmin, double ray_tmax,
+  bool hit(const Ray &ray, Interval ray_t,
            hit_record &hit_record) const override
   {
     const Vec3 C = center_;
@@ -23,10 +24,10 @@ public:
       return false;
 
     double root = (-b - std::sqrt(discriminant)) / (2.0 * a);
-    if (root <= ray_tmin || root >= ray_tmax)
+    if (!ray_t.contains(root))
     {
       root = (-b + std::sqrt(discriminant)) / (2.0 * a);
-      if (root <= ray_tmin || root >= ray_tmax)
+      if (!ray_t.contains(root))
         return false;
     }
 
