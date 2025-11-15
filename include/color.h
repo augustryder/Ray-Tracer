@@ -6,11 +6,19 @@
 
 using Color = Vec3;
 
+inline double linear_to_gamma(double linear_component)
+{
+  if (linear_component >= 0.0)
+    return std::sqrt(linear_component);
+  else
+    return 0.0;
+}
+
 inline void write_color(std::ostream &os, const Color &color)
 {
-  const auto r = color.x();
-  const auto g = color.y();
-  const auto b = color.z();
+  const auto r = linear_to_gamma(color.x());
+  const auto g = linear_to_gamma(color.y());
+  const auto b = linear_to_gamma(color.z());
 
   static const Interval intensity{0.000, 0.999};
   const int r_byte = static_cast<int>(intensity.clamp(r) * 256);

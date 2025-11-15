@@ -54,13 +54,13 @@ private:
     if (world.hit(ray, Interval{0.001, infinity}, hit_record))
     {
       // return 0.5 * (hit_record.normal + Color{1, 1, 1});
-      Ray reflected_ray{hit_record.position,
-                        random_reflection(hit_record.normal)};
+      const auto dir = hit_record.normal + random_unit_vector();
+      Ray reflected_ray{hit_record.position, dir};
       return 0.5 * ray_color(reflected_ray, depth - 1, world);
     }
     const Vec3 unit_dir = normalize(ray.direction());
     const double a = 0.5 * (unit_dir.y() + 1);
-    return a * Color{0.1, 0.2, 0.8} + (1 - a) * Color{1.0, 1.0, 1.0};
+    return a * Color{0.3, 0.5, 0.8} + (1 - a) * Color{1.0, 1.0, 1.0};
   }
 
   Ray get_ray(int row, int col) const
