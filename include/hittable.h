@@ -12,7 +12,7 @@ struct hit_record
 
   void set_face_normal(const Ray &ray, const Vec3 &outward_normal)
   {
-    if (dot(ray.direction(), outward_normal) < 0)
+    if (dot(ray.direction(), outward_normal) < 0.0)
       is_outward_face = true;
     else
       is_outward_face = false;

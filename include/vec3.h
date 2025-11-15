@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils.h"
 #include <cmath>
 #include <iostream>
 
@@ -82,3 +83,31 @@ inline Vec3 cross(const Vec3 &u, const Vec3 &v)
 }
 
 inline Vec3 normalize(const Vec3 &v) { return v / v.length(); }
+
+inline Vec3 random_vector()
+{
+  return Vec3{random_double(), random_double(), random_double()};
+}
+
+inline Vec3 random_vector(double min, double max)
+{
+  return Vec3{random_double(min, max), random_double(min, max),
+              random_double(min, max)};
+}
+
+inline Vec3 random_unit_vector()
+{
+  while (true)
+  {
+    Vec3 v = random_vector(-1, 1);
+    auto length_sqrd = v.length() * v.length();
+    if (1e-160 < length_sqrd && length_sqrd <= 1)
+      return normalize(v);
+  }
+}
+
+inline Vec3 random_reflection(const Vec3 &normal)
+{
+  const Vec3 v = random_unit_vector();
+  return (dot(v, normal) >= 0.0) ? v : -v;
+}

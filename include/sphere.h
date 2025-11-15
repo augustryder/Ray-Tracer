@@ -20,7 +20,7 @@ public:
     const double b = -2.0 * dot(d, (C - Q));
     const double c = dot(C - Q, C - Q) - radius_ * radius_;
     const double discriminant = b * b - 4 * a * c;
-    if (discriminant < 0)
+    if (discriminant <= 0)
       return false;
 
     double root = (-b - std::sqrt(discriminant)) / (2.0 * a);

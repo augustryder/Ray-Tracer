@@ -11,7 +11,7 @@ public:
   double min() const { return min_; }
   double max() const { return max_; }
 
-  bool contains(double x, bool exclusive = false) const
+  bool contains(double x, bool exclusive = true) const
   {
     return exclusive ? min_ < x && x < max_ : min_ <= x && x <= max_;
   }

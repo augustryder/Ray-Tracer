@@ -2,6 +2,7 @@
 
 #include "color.h"
 #include "ray.h"
+#include "vec3.h"
 #include "world.h"
 #include <fstream>
 #include <iostream>
@@ -11,9 +12,10 @@ class Camera
 public:
   Camera() = default;
   Camera(const Vec3 &pos, double aspect_ratio, int image_width,
-         int samples_per_pixel)
+         int samples_per_pixel, int max_depth)
       : camera_pos_{pos}, aspect_ratio_{aspect_ratio},
-        image_width_{image_width}, samples_per_pixel_{samples_per_pixel}
+        image_width_{image_width}, samples_per_pixel_{samples_per_pixel},
+        max_depth_{max_depth}
   {
   }
 
@@ -34,7 +36,7 @@ public:
         for (auto s = 0; s < samples_per_pixel_; s++)
         {
           Ray ray = get_ray(row, col);
-          pixel_color += ray_color(ray, world);
+          pixel_color += ray_color(ray, max_depth_, world);
         }
         pixel_color /= samples_per_pixel_;
         write_color(image_file, pixel_color);
@@ -44,12 +46,17 @@ public:
   }
 
 private:
-  Color ray_color(const Ray &ray, const World &world) const
+  Color ray_color(const Ray &ray, int depth, const World &world) const
   {
+    if (depth <= 0)
+      return Color{0, 0, 0};
     struct hit_record hit_record;
-    if (world.hit(ray, Interval{0, infinity}, hit_record))
+    if (world.hit(ray, Interval{0.001, infinity}, hit_record))
     {
-      return 0.5 * (hit_record.normal + Color{1, 1, 1});
+      // return 0.5 * (hit_record.normal + Color{1, 1, 1});
+      Ray reflected_ray{hit_record.position,
+                        random_reflection(hit_record.normal)};
+      return 0.5 * ray_color(reflected_ray, depth - 1, world);
     }
     const Vec3 unit_dir = normalize(ray.direction());
     const double a = 0.5 * (unit_dir.y() + 1);
@@ -71,6 +78,7 @@ private:
   double aspect_ratio_ = 16.0 / 9.0;
   int image_width_ = 1280;
   int samples_per_pixel_ = 1;
+  int max_depth_ = 5;
 
   const int image_height_ =
       (static_cast<double>(image_width_) / aspect_ratio_ < 1)
