@@ -41,6 +41,13 @@ public:
     return std::sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
   }
 
+  bool near_zero() const
+  {
+    auto s = 1e-8;
+    return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) &&
+           (std::fabs(e[2]) < s);
+  }
+
 private:
   double e[3];
 };
@@ -68,6 +75,11 @@ inline Vec3 operator*(const Vec3 &u, double scalar)
 }
 
 inline Vec3 operator*(double scalar, const Vec3 &v) { return v * scalar; }
+
+inline Vec3 operator*(const Vec3 &u, const Vec3 &v)
+{
+  return {u[0] * v[0], u[1] * v[1], u[2] * v[2]};
+}
 
 inline Vec3 operator/(const Vec3 &u, double scalar) { return u * (1 / scalar); }
 
@@ -110,4 +122,9 @@ inline Vec3 random_reflection(const Vec3 &normal)
 {
   const Vec3 v = random_unit_vector();
   return (dot(v, normal) >= 0.0) ? v : -v;
+}
+
+inline Vec3 perfect_reflection(const Vec3 &in, const Vec3 &normal)
+{
+  return in - 2 * (dot(in, normal) * normal);
 }

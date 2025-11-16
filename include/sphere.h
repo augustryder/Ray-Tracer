@@ -1,12 +1,14 @@
 #include "hittable.h"
 #include "interval.h"
+#include "material.h"
 #include "vec3.h"
+#include <memory>
 
 class Sphere : public Hittable
 {
 public:
-  Sphere(const Vec3 &center, double radius)
-      : center_{center}, radius_{std::fmax(0, radius)}
+  Sphere(const Vec3 &center, double radius, std::shared_ptr<Material> material)
+      : center_{center}, radius_{std::fmax(0, radius)}, material_{material}
   {
   }
 
@@ -35,6 +37,7 @@ public:
     hit_record.position = ray.position(hit_record.t);
     const Vec3 outward_normal = (hit_record.position - center_) / radius_;
     hit_record.set_face_normal(ray, outward_normal);
+    hit_record.material = material_;
 
     return true;
   }
@@ -42,4 +45,5 @@ public:
 private:
   Vec3 center_;
   double radius_;
+  std::shared_ptr<Material> material_;
 };

@@ -2,6 +2,9 @@
 
 #include "interval.h"
 #include "ray.h"
+#include <memory>
+
+class Material;
 
 struct hit_record
 {
@@ -9,6 +12,7 @@ struct hit_record
   Vec3 position;
   Vec3 normal;
   bool is_outward_face;
+  std::shared_ptr<Material> material;
 
   void set_face_normal(const Ray &ray, const Vec3 &outward_normal)
   {

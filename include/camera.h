@@ -1,6 +1,8 @@
 #pragma once
 
 #include "color.h"
+#include "hittable.h"
+#include "material.h"
 #include "ray.h"
 #include "vec3.h"
 #include "world.h"
@@ -53,10 +55,14 @@ private:
     struct hit_record hit_record;
     if (world.hit(ray, Interval{0.001, infinity}, hit_record))
     {
-      // return 0.5 * (hit_record.normal + Color{1, 1, 1});
-      const auto dir = hit_record.normal + random_unit_vector();
-      Ray reflected_ray{hit_record.position, dir};
-      return 0.5 * ray_color(reflected_ray, depth - 1, world);
+      Vec3 scattered;
+      Color attenuation;
+      if (hit_record.material->scatter(ray.direction(), hit_record, attenuation,
+                                       scattered))
+      {
+        Ray reflected_ray = Ray{hit_record.position, scattered};
+        return attenuation * ray_color(reflected_ray, depth - 1, world);
+      }
     }
     const Vec3 unit_dir = normalize(ray.direction());
     const double a = 0.5 * (unit_dir.y() + 1);
