@@ -9,7 +9,7 @@
 class World : public Hittable
 {
 public:
-  World() {}
+  World() = default;
   World(std::initializer_list<std::shared_ptr<Hittable>> objects)
       : hittable_list_{objects}
   {
