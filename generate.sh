@@ -3,5 +3,7 @@
 cmake --build build
 if [[ "$?" -eq "0" ]]; then
   ./build/raytracer
-  chafa -s 100x100 image.ppm
+  magick image.ppm images/image.png
+  rm image.ppm
+  chafa -s 120x120 images/image.png
 fi

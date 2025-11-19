@@ -61,8 +61,8 @@ int main()
   // Setup camera and render
   auto aspect_ratio = 16.0 / 9.0;
   auto image_width = 1920;
-  auto sample_rate = 15;
-  auto max_depth = 30;
+  auto sample_rate = 100;
+  auto max_depth = 50;
   auto vertical_fov = 20.0;
   auto look_from = Vec3{13, 2, 3};
   auto look_at = Vec3{0, 0, 0};
