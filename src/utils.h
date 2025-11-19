@@ -10,8 +10,8 @@ inline double deg_to_rad(double degrees) { return (degrees / 180.0) * PI; }
 
 inline double random_double()
 {
-  static std::uniform_real_distribution<double> dist{0.0, 1.0};
-  static std::mt19937 generator;
+  thread_local std::uniform_real_distribution<double> dist{0.0, 1.0};
+  thread_local std::mt19937 generator{std::random_device{}()};
   return dist(generator);
 }
 

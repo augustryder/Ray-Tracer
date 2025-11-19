@@ -118,6 +118,16 @@ inline Vec3 random_unit_vector()
   }
 }
 
+inline Vec3 random_in_unit_disk()
+{
+  while (true)
+  {
+    Vec3 v{random_double(-1, 1), random_double(-1, 1), 0};
+    if (v.length() * v.length() < 1)
+      return v;
+  }
+}
+
 inline Vec3 random_reflection(const Vec3 &normal)
 {
   const Vec3 v = random_unit_vector();
@@ -127,4 +137,16 @@ inline Vec3 random_reflection(const Vec3 &normal)
 inline Vec3 perfect_reflection(const Vec3 &in, const Vec3 &normal)
 {
   return in - 2 * (dot(in, normal) * normal);
+}
+
+// Snell's Law: n1 * sin(theta_1) = n2 * sin(theta_2)
+inline Vec3 refract(const Vec3 &in, const Vec3 &normal, double n1_over_n2)
+{
+  const Vec3 unit_in = normalize(in);
+  const double cos_theta = std::fmin(dot(-unit_in, normal), 1.0);
+  const Vec3 out_perp = n1_over_n2 * (unit_in + cos_theta * normal);
+  const Vec3 out_parallel =
+      -std::sqrt(std::fabs(1.0 - out_perp.length() * out_perp.length())) *
+      normal;
+  return out_perp + out_parallel;
 }

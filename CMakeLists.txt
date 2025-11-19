@@ -4,6 +4,14 @@ project(Ray-Tracer)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(include)
+find_package(TBB REQUIRED)
 
-add_executable(raytracer src/main.cpp)
+include_directories(PRIVATE src)
+
+add_executable(raytracer 
+  src/main.cpp
+)
+
+target_link_libraries(raytracer
+  PRIVATE TBB::tbb
+)
