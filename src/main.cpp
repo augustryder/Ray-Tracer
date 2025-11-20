@@ -16,28 +16,29 @@ int main()
       std::make_shared<Sphere>(Vec3{0, -1000, 0}, 1000.0, ground_material);
   world.add(ground);
 
-  for (int a = -5; a < 5; a++)
+  for (int a = -8; a < 8; a++)
   {
-    for (int b = -5; b < 5; b++)
+    for (int b = -8; b < 8; b++)
     {
-      auto choose_mat = random_double();
-      Vec3 center{a + 0.9 * random_double(), 0.2, b + 0.9 * random_double()};
+      const auto choose_mat = random_double();
+      const Vec3 center{a + 0.9 * random_double(), 0.2,
+                        b + 0.9 * random_double()};
 
       if ((center - Vec3(4, 0.2, 0)).length() > 0.9)
       {
         std::shared_ptr<Material> sphere_material;
-        if (choose_mat < 0.8)
+        if (choose_mat < 0.60)
         {
           // diffuse
-          auto albedo = random_vector();
+          const auto albedo = random_vector();
           sphere_material = std::make_shared<Lambertian>(albedo);
           world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
         }
-        else if (choose_mat < 0.95)
+        else if (choose_mat < 0.85)
         {
           // metal
-          auto albedo = random_vector(0.5, 1);
-          auto fuzz = random_double(0, 0.5);
+          const auto albedo = random_vector(0.5, 1);
+          const auto fuzz = random_double(0, 0.5);
           sphere_material = std::make_shared<Metal>(albedo, fuzz);
           world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
         }
@@ -53,14 +54,16 @@ int main()
 
   auto material1 = std::make_shared<Dielectric>(1.0 / 1.5);
   world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, material1));
+
   auto material2 = std::make_shared<Lambertian>(Vec3(0.4, 0.2, 0.1));
   world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, material2));
+
   auto material3 = std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0);
   world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, material3));
 
   // Setup camera and render
   auto aspect_ratio = 16.0 / 9.0;
-  auto image_width = 1920;
+  auto image_width = 1280;
   auto sample_rate = 100;
   auto max_depth = 50;
   auto vertical_fov = 20.0;
