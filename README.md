@@ -13,7 +13,7 @@ A custom parallel ray tracing solution built in C++.
 
 The image below was rendered at 1920x1080 resolution with 100 samples per pixel.
 
-![example_render](https://github.com/augustryder/Ray-Tracer/blob/main/images/1920-100-50.png) 
+![example_render](https://github.com/augustryder/Ray-Tracer/blob/main/images/1280-100-50.png) 
 
 ---
 
